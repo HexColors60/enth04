@@ -1,0 +1,414 @@
+<html>
+<head>
+<title>Enth & Flux</title>
+<link rel="stylesheet" href="common.css?20110502">
+</head>
+<body>
+
+<p id="menu"><a href="/">aerosuidae.net</a></p>
+<h1>Enth & Flux</h1>
+<p>These are a series of pages resurrected from the <a href="http://www.archive.org/">Wayback Machine</a> dating back to 2001.  I'm keeping them here mainly for posterity's sake, and in case anyone is interested.</p>
+<p>Most of my current Forth related work uses <a href="language.html">Raven</a>.</p>
+<p>If nothing else, these might be interesting to anyone who already knows something about <a href="http://www.colorforth.com/">colorForth</a>, particularly as Flux was originally built before colorForth was released, by working purely from Chuck Moore's talks to SVFIG that were kindly video taped and documented by <a href="http://www.ultratechnology.com/">Jeff Fox</a>.  So, in a sense, Flux is a conceptual descendant of colorForth, but also a throwback from the colorForth version eventually seen by the public.</p>
+<h2>The n'th Forth</h2>
+<p>This is an experimental Forth written as a stand alone system for the 80386 PC or above. It has had some testing on various Pentiums and Athlons, desktops and laptops. Compatables unknown. Enth is currently based on the ANS Forth wordset and design though it is not guaranteed to be completely ANS complient. Enth's Bootcode is written in the Netwide Asembler or NASM version 0.98, a public domain 80x86 assembler. The kernel is written in SASM, a Forth coded assembler of my own included with the system.</p>
+<p>The reasons for Enth are threefold. First, because it really interesting writing a stand alone Forth! Second, to begin to escape from the existing Operating Systems. And Third, to act as a companion to the experimental Flux system based on colorForth. The current incarnations of Flux and Enth are very closely related to the extent that Flux is running on Enth. Hopefully the two systems, one traditional and one colored, will allow people to the two types of Forth in context.</p>
+<h2>readme - September 22nd, 2002</h2>
+<pre>
+ Enth is Copyright (c) 2002 Sean Pringle. This version of Enth is released to the
+      Public Domain.
+ Enth comes with ABSOLUTELY NO WARRANTY. No responsibility for anything will be
+      assumed by Sean Pringle. By using Enth or it's applications, including Flux,
+      you agree there is no implied warranty with regard to useability,
+      reliability or support.
+</pre>
+<h3>Video</h3>
+<p>Runs at 1024x768 pixels, 64k or 32k colors, by default. Requires VESA 2.0+ video card with Linear Frame Buffer support. Failure to initialise the video will result in a 'Vid' error appearing during boot and system will hang.</p>
+<p>To run at 800x600 pixels, alter the VMODE line in EBOOT.ASM and recreate the boot disk image by running CREATE.BAT.</p>
+<h3>Interface</h3>
+<p>Default post boot interface is the Flux Color Editor. There is no longer any distinction between the Forth the Editor and Forth the Terminal, they are one and the same.</p>
+<h3>The color editor</h3>
+<p>The color editor is started automatically at BLOCK 0, Line 0 at boot. Each block is 1024 bytes wide. The editor operates like a sequential file editor within each block. Keyboard layout is standard QWERTY. Normal text editing functions are used including keys like SHIFT, CAPS, BKSPC, DEL, HOME, END and the ARROWs.</p>
+<h3>Special control keys</h3>
+<pre>
+PGUP / PGDN             scroll through blocks.
+F1-F10                  insert color tokens/spaces.
+SPACEBAR                insert last used color token.
+CTRL then F1-F10        insert color token that doubles as a line break.
+ALT                     alternate between code and shadow blocks
+F12                     insert normal ascii blank space.
+</pre>
+<p>Upper right of screen display:</p>
+<ul>
+<li>block number</li>
+<li>number of free characters remaining on block</li>
+<li>action, color and function key of token or word under cursor</li>
+</ul>
+<h3>The interactive terminal</h3>
+<p>BLOCK 0 acts as the system terminal input buffer. Use the editor to edit the top line of BLOCK 0 and press the enter key. BLOCK 0 will be interpretted until the word OK is encountered, whereupon editing will be restarted. OKs are inserted automatically.</p>
+<p>Command line history scrolls down the page. Because you are simply editing a block, holding down the delete key until the required previous command line reaches the top of the page gives you a simple form of command history.</p>
+<p>Experiment with the colors and function keys. Look at BLOCK 1, it has some useful words defined on it.</p>
+<h3>Recommendation</h3>
+<p>Take it slow. The learning curve may be steep for some. Those who have experience with Chuck Moore's colorForth may recognise some things, but be warned: there will also be things you won't recognise. Flux is not a colorForth clone by any means, though certainly a cousin :)</p>
+<h3>ANS Forth</h3>
+<p>Yes, as in the original release, Enth contains an ANS Forth based kernel. That is to say kernel words that also exist in ANS Forth should behave as the standard defines them. The Enth interpretter loop should behave in an ANS Forth fashion. At least such is the idea. Don't be surprised by bugs.</p>
+<p>Flux is a dual wordlist cmForth/colorForth model Forth implemented on top of Enth (actually beside Enth now as it is in the kernel). Don't go into it with any preconceptions.</p>
+<p>Yes, the primary Enth interface is now the colored Flux editor. This means writing color code is easy and even simple. The Enth ANS Forth interpretter still operates though and you can access it simply through EVALUATE or ELOAD. The more dedicated programmer may see other ways of reconfiguring the system to become ANS again. Feel free.</p>
+<p>It is my intention to reimplement the ANS Forth terminal interface as an application and an alternative to the color editor. Maybe in color code. Maybe not. Don't know yet.</p>
+<h3>Where to?</h3>
+<p>I've been using this system in various forms for the past two years. It changes sometimes, depending on its task. This release is a snapshot of its current configuration. I wanted to consolidate it a little before releasing again, but it refuses to co-operate. So WYSIWYG. I guess as very few people seem to be using it anyway, what direction it takes is of little matter. It goes whereever the territory appears interesting :)</p>
+<h3>Your Code</h3>
+<p>Feel free to contribute. Nobody really has, so far. So consider it a blank slate. I'll look at anything.</p>
+<h3>Source Code</h3>
+<pre>
+EBOOT.ASM       is the boot sector code.
+                Boot and Video.
+EKERNEL.ASM     is a second stage boot loader.
+                GDT. IDT. IRQs.
+EMAKEIMAGE.ASM  assembles the binary files into one bootable image.
+</pre>
+<p>All three are NASM compilable. All are automatically recompiled if CREATE.BAT is run.</p>
+<pre>
+SOURCE.BLK      System color source code.
+COLORHTML.F     HTML generator for SOURCE.BLK.
+ENTH.F          Kernel.
+EMAKE.F         Run metacompiler to recompile Kernel into ENTH.BIN.
+                Win32Forth 4.2 compilable.
+</pre>
+<h3>Memory Maps</h3>
+<p>System Memory Structure</p>
+<pre>
+0h     -&gt; 0FFFFh        GDT. IDT. IRQ variables. VESA video descriptor.
+10000h -&gt; 1FFFFh        Kernel.
+20000h -&gt; 3FFFFh        128 System Color Forth Source Blocks, half code, half shadow.
+40000h -&gt; 8FFFFh        Vacant.
+90000h -&gt; 9FFFFh        DMA Transfer Buffer.
+00000h -&gt;               Allocatable Memory Space.
+</pre>
+<p>Boot Disk Structure</p>
+<pre>
+0h     -&gt; 0FFFFh        Boot code, descriptor tables and Kernel.
+10000h -&gt; 2FFFFh        128 System Color Forth Source Blocks, half code, half shadow.
+30000h -&gt;               Vacant.
+</pre>
+<h3>Memory Managment</h3>
+<pre>
+ALLOCATE and FREE as in ANS Forth.
+
+BLOCKS          ( u - a )
+        ALLOCATE U contiguous blocks of memory and return their address.
+
+BLOCK           ( u - a )
+        Return start address of block U.
+
+SUPERBLOCK      ( - a )
+        A User Variable. A task's BLOCK references are based relative to the
+        value stored in this variable.
+</pre>
+<h3>Multitasking</h3>
+<pre>
+TASK            ( - )
+        Usage: CREATE CHARLIE TASK
+        Else: HERE TASK CONSTANT CHARLIE
+        Or in color: &lt;red&gt;CHARLIE&lt;white&gt;TASK (reference as address: &lt;yellow&gt;CHARLIE)
+
+WAKE            ( up - )
+        Wake task UP. eg CHARLIE WAKE
+
+SLEEP           ( up - )
+        Sleep task UP. eg CHARLIE SLEEP
+
+START           ( up - )
+        WAKE task UP and begin it executing current definition following START.
+
+STOP            ( - )
+        Volantarily go to SLEEP.
+
+ASSIGN          ( xt up - )
+        Initialise task UP to start executing word XT when next aWAKEned.
+
+PAUSE           ( - )
+        Perform a task switch.
+
+MS              ( n - )
+        Continue to PAUSE for n milliseconds.
+
+CHILD           ( xt - )
+        Create background child task. ASSIGN xt to it. WAKE it. A CHILD cannot
+        compile.
+
+SLAVE           ( u - up )
+        Create a SLAVE task with dictionary of U Blocks. A SLAVE can compile yet
+        remains under control of the creating task.
+
+MASTER          ( u - up )
+        Create autonomous MASTER task with dictionary of U Blocks. A master can
+        compile and remain active after its creating task dies.
+
+CEDE            ( n up - )
+        Hand N stack items to MASTER or SLAVE task UP. Start task UP compiling
+        the current source block following CEDE.
+
+HALT            ( up - )
+        HALT task UP. If task UP has children HALT them too. If task UP has
+        ALLOCTEd memory, free it. HALTing a MASTER task will kill and erase it
+        completely, along with any children it may have. It can never be reused.
+        HALTing a SLAVE or CHILD task with merely reset them. They may be
+        reused until their creator MASTER task is HALTed.
+</pre>
+<h3>MARKERs and BRANCHs</h3>
+<p>MARKER operates similar to the ANS Forth fashion. Execution of a MARKER will roll back the system to the point just before the MARKER's definition. A MARKER may only be executed by the task that created it. Roll back affects the dictionary pointers and wordlists of that task. It also frees any memory ALLOCATEd to that task since MARKER's creation and HALTs any children tasks created since MARKER's creation.</p>
+<p>BRANCH creates a branchpoint, in the dictionary, from a previous MARKER, hiding words defined since the previous MARKER was created. Execution of a BRANCH rolls back anything defined since the BRANCH was created and reinstates the dictionary wordlists as they were previous to BRANCH being created. A BRANCH affects the dictionary, alllocated memory and children tasks just as MARKER affects them.</p>
+<h3>Video Output</h3>
+<pre>
+SCREEN          ( - )
+       Compile video output words. Block 7.
+</pre>
+<h3>WORDS ( wid - )</h3>
+<p>In Enth, WORDS behaves in a non ANS Forth fashion. It displays what ever is in the wordlist who's identifier is on the stack. eg...</p>
+<pre>
+ROOT WORDS
+FLUX WORDS
+MACRO WORDS
+</pre>
+<p>Additionally, WORDS is a small application. The Forth terminal will disapear, the wordlist will be displayed and the system will wait for the Enter/Return key to be pushed before exiting.</p>
+<h3>Floppy Imaging</h3>
+<p>These two words use a master background task which handles reading and writing the floppy, allowing you to continue with other things. They use the first floppy drive usually known as A: in MS-DOS/Windows and fd0 in Linux.</p>
+<pre>
+FLOPPY@         ( a - )
+        Image the inserted Floppy into memory at address (a).
+
+FLOPPY!         ( a - )
+        Write the floppy image at address (a) to the Floppy.
+</pre>
+<p>In Enth 0.4, the floppy imaging is set to read and write the first 25 cylinders each time, as this encompasses the amount of space taken up by the image in the boot disk. I often change this to read or write the amount of data I am working with at any time. You can too. It must be a mulitple of cylinders though. The best method is to create a buffer in allocated memory that is 1.44mb wide...</p>
+<pre>
+ 1440 BLOCKS
+</pre>
+<p>... and keep the address somewhere. Alter the floppy code (block 18 in Enth 0.4) to read anything up to 80 cylinders. The line should read something like...</p>
+<pre>
+ 0 25 go
+</pre>
+<p>After imaging, use the DUMP program to view the contents of your buffer. You should see the boot sector of your floppy! Use the infinite 1.44mb storage as you see fit :-)</p>
+<h2>Download - September 23rd, 2002</h2>
+<h3>Current Release</h3>
+<p><a href="enth04.zip">Enth0.4</a> September 22nd, 2002</p>
+<pre>
+Features
+- 1024x768, or 800x600, pixel 64k or 32k color graphics
+- Revamped Multitasking
+- Dictionary BRANCH points
+- New Flux color interface (editor&terminal)
+- Moved everything beyond kernel into compiled-on-demand color code
+- Moved Flux compiler into kernel as assembler
+- Moved Flux macros into color code
+- 12x22 or 6x11 fonts
+- Added small example apps (eg dump, when, tetris)
+- more...
+Bugs Fixed
+- Who knows...
+</pre>
+<h3>Previous Releases</h3>
+<p>Enth0.3.0 September 4th, 2001</p>
+<pre>
+Features
+- 800x600 pixel 64k or 32k color graphics.
+- Improved Multitasking.
+- Improved Flux.
+Bugs Fixed
+- Countless. Its been 2 months after all :-)
+</pre>
+<p>Enth0.2.6 July 4th, 2001</p>
+<pre>
+Features
+- Split ColorEd into CodeEd (standard code version) and ColorEd (color code
+  version).
+- Enth Block System simplified with the removal of the editor specific CYLS
+  and ORIG and the introduction of the task specific SUPERBLOCK.
+- Improved Enth's code primitive inlining skills.
+- Added a Flux color terminal for interactive Color Forth.
+- Expanded (and infact simplified :-) the Enth multitasking.
+- Rebuilt Enth to bring it's Dictionary structure into line with Flux's.
+  Now the two may run together in a simpler and faster fashion.
+Bugs Fixed
+- Removed an incorrect Port I/O Write in the Floppy Driver that was
+  causing a fault in some machines and the Bochs i386 emulator.
+- Added a missing Port I/O Write in the Real Time Clock driver that was
+  causing the system boot sequence to hang on some machines.
+- Thanks to those who reported these and other bugs.
+</pre>
+<p>Enth0.2.5 June 16th, 2001</p>
+<pre>
+Features
+- Assembler Included (SASM)
+- Slight Enth compile speed improvement. (Now it's merely 'slow' :-)
+- Added 16 and 32 bit I/O words.
+- Slight all round documentation additions :-)
+- Flux wordset simplified.
+- Flux compiled code has more optimization.
+- Flux low level words coded instead of ALIASed.
+Bugs Fixed
+- Enth number conversion reworked.
+- Flux Comment tokens repaired.
+</pre>
+<p>Enth0.2.4 May 15th, 2001</p>
+<pre>
+Features
+- Flux wordset simplified.
+- Added more native code optimization to Flux.
+Bugs Fixed
+- Flux FCOMPILE, removed. Some words conflicted with it.
+</pre>
+<p>Enth0.2.3May 14th, 2001</p>
+<pre>
+Features
+- ColorEd supports multiple editing sessions.
+- ColorEd supports block insertion, deletion and shifting.
+- Flux Headers and Code separated to allow cascading words.
+- Flux code can now control the number base by Color Token.
+- Flux literals are now compiled by trailing Green Tokens. There is no
+  explicit Color Token to do the job.
+- Improved Floppy Driver. Reading and writing multiple adjacent sectors
+  is faster.
+Bugs Fixed:
+- Enth KEY and KEY? reworked.
+- Enth @R+ and !R+ reworked.
+- Enth RECURSE reworked.
+- Flux LOAD interprets blocks of the correct length.
+- Flux C@A aliased correctly.
+</pre>
+<p>Enth0.2.2 May 3rd, 2001</p>
+<pre>
+Features
+- Modified Video Driver removing the need for a Video Task.
+- Added more native code optimization to Flux.
+- Additions to ColorEd.
+Bugs Fixed
+- Improved Floppy Driver. Some newer drives were not seeking correctly.
+- ColorEd TAB key no longer enters infinite loops. (Don't ask!)
+</pre>
+<p>Enth0.2.1 April 28th, 2001</p>
+<pre>
+Features
+- ColorEd has more HotKeys and Control Keys for easier block navigation.
+- ColorEd is more informative of what modes it is in.
+- ColorEd works in a simpler fashion in tandem with the Enth Console.
+- Started ducumentation blocks viewable in ColorEd.
+Bugs Fixed:
+- ColorEd CYLS resizes allocated Block buffers when altered.
+- ColorEd F12 key inserts blank space.
+</pre>
+<p>Enth0.2 April 27th, 2001</p>
+<h2>Colored Forth - September 24th, 2002</h2>
+<p>I've been playing around with Colored Forth (brainchild concept of Charles Moore) for around two years now. I've written my own system. I use it. It is unique in some ways and ordinary in others. I think the ideas behind Colored Forth are worth considering.</p>
+<p>In fact, Colored Code really means Visually Distinctive Code. Color is simply the method of choice used by Chuck Moore and others to distinguish between various types of words in their source code.</p>
+<p>In the simplest form, each blank space in the text is replaced with a Token that is then used by two programs. Firstly the editor uses the token to visually distinguish the following word from its neighbours, and thereby tell the programmer what sort of word it is. For example: red definition, green compiled word, white executed word, magenta number, blue comment etc. Secondly the compiler uses the token to decide what to do with the following word. For example: define it, compile it, execute it, make it a number, skip a comment.</p>
+<p><i>There are benefits to both uses of tokens.</i></p>
+<p>The programmer gains valuable contextual information about the code. Mistakes can be spotted easily. Compile and Interpret modes can be switched between at will with nothing more than a color change. Numbers are obvious as is their base. Some words are eliminated altogether by providing their functionality in a token.</p>
+<p>The compiler compiles the code faster as the source is more compact and it knows in advance what to do with each word. Numbers are not sought after in the dictionary. No system STATE information is needed as each word provides its own. Error checking can be improved if required.</p>
+<p>Ultimately, as in many experiments, the differences between Colored and ANS Forth simply throw up concepts and entice us to think. Visually distinctive code is not about forcing people to give up the more traditional methods such as plain text. It is not about saying this way is better or that way is old fashioned. It is simply about exploring another alternative in the hopes that something useful can be gained, or if nothing else, at least a good time can be had by those participating!</p>
+<pre>
+Flux's Color Tokens
+
+Color     Key   Action
+---------------------------
+RED       F1    Define
+GREEN     F2    Compile
+WHITE     F3    Execute
+CYAN      F4    Decimal
+MAGENTA   F5    Hexadecimal
+YELLOW    F6    Address
+KAHKI     F7    Postpone
+BLUE      F10   Comment
+---------------------------
+</pre>
+<h2>green</h2>
+<p>Flux makes use of dual wordlists, MACRO and FLUX. The Macro wordlist contains all the immediate words, sometimes referred to as compiler directives, as they are executed at compile time. The Flux wordlist contains the general use wordset and is where new definitions are placed by default. As it probably should not be up to the programmer to know which words in the system are immediate and which are not, both Macro words and Flux words may be green. Hence words like IF THEN ; FOR NEXT are the same color in source as DUP DROP + /MOD. In contrast, Flux words may also be white while Macro words may not.</p>
+<h2>cyan and magenta</h2>
+<p>In normal Forth source a number can be used in both compiler STATE modes. ie, Outside a definition in interpret mode, where it is placed on the stack at compile time, and inside a definition in compile mode, where it is compiled as a Literal. In Flux, since each word bascially includes its own STATE information in its color, there is no system STATE variable. Therefore, how does the compiler know whether a cyan number is meant to be compiled as a literal or not?</p>
+<p><i>If a cyan or maganta word is followed by a green space and/or word, it will be compiled as a literal.</i></p>
+<p>This little rule was derived from early versions of Chuck's original Color Forth as documented on Jeff Fox's website. It works well and is infact not hard to work with. Usually, inside a green definition, you want numbers to be compiled as literals. They are almost always already followed by a green word (hence a green color token) and you don't need to think about it at all. Once in a while you may want to compile a number in another way, like two numbers together. For this special case you must manually insert a solitary green space following the first number. This results in an extra space in your source, but it is easy to see what is going on here at a later date, as hovering the Color Editor cursor over that space will show it up as green.</p>
+<h2>yellow</h2>
+<p>The yellow address token is a useful one. It returns the code field address, (equivalent of an execution token in Enth) of a word. For example making the word DUP yellow, is the same as saying...</p>
+<pre>
+' DUP
+</pre>
+<p>...in ANS Forth. There is a quirk. Bear in mind that this returns an address on the stack. As Forth programmers we know an address is just another number. Therefore, in Flux:</p>
+<p><i>If a yellow word is followed by a green space and/or word, it will be compiled as a literal, just like a number.</i></p>
+<p>There is another use for the yellow token. Consider a VARIABLE in ANS Forth. It is designed so that executing a variable's name will return the address of its contents (ie, its data field) from which one may @ or !. This requires each variable to contain a small fragment of code, or at least a reference to code elsewhere, which is run whenever the variable is called. In ANS Forth one may create a word that has the same behavior as a variable, by using:</p>
+<pre>
+CREATE MYWORD 0 ,
+</pre>
+<p>...whereupon MYWORD may then simply be called like any other word. In Flux, when a red word is first defined, it is simply like a label, merely a header pointing to its code elsewhere in memory. You can of course compile in a code fragment to make the new word behave like a varibale when called, or you can simply always refer to that word in yellow. All this is doing is using a Forth word like a pointer, rather than a code entry point. Why compile a code fragment to return the address of your data, when you can simply use the word's address for your data? Clear as mud?</p>
+<h2>white to green trasition</h2>
+<p>It is useful to move in and out of compile mode and interpret mode at will. In ANS Forth the [ square brackets ] are used for this. In color code we can simply change from green to white and back again. This is common in ANS Forth:</p>
+<pre>
+: DEFINITION ( - ) somecode ... [ some code and maths ] LITERAL ... somecode ;
+</pre>
+<p>The numeric result of whatever was done at compile time inside the square brackets is often immediately compiled as a literal. Because this rule so often holds, in color code:</p>
+<p>[i If a white word is followed by a green space and/or word, the number on top of the data stack will be compiled as a literal.]</p>
+<p>These rules may sound a little limiting and complex to deal with right now. I certainly thought so when I started. But give them a go. It really is quite elegant IMHO. If you come up with a better scheme, I'm all ears :)</p>
+<h2>Multitasking - September 25th, 2002</h2>
+<p>Multitasking is something found in many Forths. It is certainly nothing new. ANS Forth does not really extend into this area, though it is possible for a multitasking Forth to also be ANS Forth complient. Enth's co-operative multitasking structure and words have evolved somewhat over time. The design is a fairly normal Forth multitasker. It borrows words used in several other Forths.</p>
+<p>Being a Forth with no host operating system, there was always the question as to whether it should be extended to be a true multiuser system, in addition to multitasking. This seemed to represent a rather large jump in complexity to implement (at least to this author :), so it wasn't done. However, the multitasking does have capacity to do some interesting things.</p>
+<p><i>There are three types of task...</i></p>
+<p>A Master task has a dictionary and can compile. It is autonomous in that it has no parent task. It will run indefinitely.</p>
+<p>A Slave task has a dictionary and can compile. It is non-autonomous in that it always remains linked too, and under the control of, a Master task.</p>
+<p>A Child task cannot compile. It is non-autonomous and must run precompiled code. Like the slave, it too is linked too, and under the control of, a Master task.</p>
+<pre>
+TASK            ( - )
+        Usage: CREATE CHARLIE TASK
+        Else: HERE TASK CONSTANT CHARLIE
+        Or in color: &lt;red&gt;CHARLIE&lt;white&gt;TASK (reference as address:
+        &lt;yellow&gt;CHARLIE)
+
+WAKE            ( up - )
+        Wake task UP. eg CHARLIE WAKE
+
+SLEEP           ( up - )
+        Sleep task UP. eg CHARLIE SLEEP
+
+START           ( up - )
+        WAKE task UP and begin it executing current definition following
+        START.
+
+STOP            ( - )
+        Volantarily go to SLEEP.
+
+ASSIGN          ( xt up - )
+        Initialise task UP to start executing word XT when next
+        aWAKEned.
+
+PAUSE           ( - )
+        Perform a task switch.
+
+MS              ( n - )
+        Continue to PAUSE for n milliseconds.
+
+CHILD           ( xt - )
+        Create background child task. ASSIGN xt to it. WAKE it. A CHILD
+        cannot compile.
+
+SLAVE           ( u - up )
+        Create a SLAVE task with dictionary of U Blocks. A SLAVE can
+        compile yet remains under control of the creating task.
+
+MASTER          ( u - up )
+        Create autonomous MASTER task with dictionary of U Blocks. A
+        master can compile and remain active after its creating task dies.
+
+CEDE            ( n up - )
+        Hand N stack items to MASTER or SLAVE task UP. Start task UP
+        compiling the current source block following CEDE.
+
+HALT            ( up - )
+        HALT task UP. If task UP has children HALT them too. If task UP
+        has ALLOCTEd memory, free it. HALTing a MASTER task will kill and
+        erase it completely, along with any children it may have. It can
+        never be reused. HALTing a SLAVE or CHILD task with merely reset
+        them. They may be reused until their creator MASTER task is HALTed.
+</pre>
+
+<p id="foot">2011-05-02 eof</p>
+</body>
+</html>
